@@ -14,7 +14,6 @@
     <name>User Web Application ${revision}</name>
     <packaging>war</packaging>
 
-
     <dependencies>
         <dependency>
             <groupId>org.geekbang.projects</groupId>
@@ -57,9 +56,16 @@
         </dependency>
 
         <!-- Hibernate Validator -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.1.0.Final</version>
         </dependency>
 
         <dependency>
@@ -86,13 +92,6 @@
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.1</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.derby</groupId>
-                        <artifactId>derby</artifactId>
-                        <version>${derby.version}</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>tomcat-run</id>

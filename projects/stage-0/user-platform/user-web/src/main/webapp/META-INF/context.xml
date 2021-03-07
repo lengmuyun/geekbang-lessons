@@ -45,4 +45,8 @@
 			  type="org.geektimes.projects.user.service.UserServiceImpl"
 			  factory="org.apache.naming.factory.BeanFactory" />
 
+	<Resource name="bean/DestroyAnnotationProcessor" auth="Container"
+			  type="org.geektimes.projects.user.processor.DestroyAnnotationProcessor"
+			  factory="org.apache.naming.factory.BeanFactory" />
+
 </Context>

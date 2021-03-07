@@ -2,6 +2,7 @@ package org.geektimes.context;
 
 import org.geektimes.function.ThrowableAction;
 import org.geektimes.function.ThrowableFunction;
+import org.geektimes.projects.user.processor.DestroyAnnotationProcessor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -85,14 +86,15 @@ public class ComponentContext {
      * </ol>
      */
     protected void initializeComponents() {
+        DestroyAnnotationProcessor destroyAnnotationProcessor = lookupComponent("bean/DestroyAnnotationProcessor");
         componentsMap.values().forEach(component -> {
             Class<?> componentClass = component.getClass();
             // 注入阶段 - {@link Resource}
             injectComponents(component, componentClass);
             // 初始阶段 - {@link PostConstruct}
             processPostConstruct(component, componentClass);
-            // TODO 实现销毁阶段 - {@link PreDestroy}
-            processPreDestroy();
+            // 销毁阶段 - {@link PreDestroy}
+            processPreDestroy(destroyAnnotationProcessor, component, componentClass);
         });
     }
 
@@ -131,8 +133,13 @@ public class ComponentContext {
         });
     }
 
-    private void processPreDestroy() {
-        // TODO
+    private void processPreDestroy(DestroyAnnotationProcessor processor, Object component, Class<?> componentClass) {
+        Stream.of(componentClass.getMethods())
+                .filter(method ->
+                        !Modifier.isStatic(method.getModifiers()) &&      // 非 static
+                                method.getParameterCount() == 0 &&        // 没有参数
+                                method.isAnnotationPresent(PreDestroy.class) // 标注 @PostConstruct
+                ).forEach(method -> processor.addLifecycleMetadata(component, method));
     }
 
     /**
