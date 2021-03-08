@@ -1,12 +1,19 @@
 package org.geektimes.projects.user.service;
 
+import cn.hutool.crypto.SecureUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.sql.LocalTransactional;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.util.Collection;
+import java.util.Set;
 
 public class UserServiceImpl implements UserService {
 
@@ -20,15 +27,24 @@ public class UserServiceImpl implements UserService {
     // 默认需要事务
     @LocalTransactional
     public boolean register(User user) {
+        Set<ConstraintViolation<User>> validateInfoSet = validator.validate(user);
+        if (!CollectionUtils.isEmpty(validateInfoSet)) {
+            return false;
+        }
+
+        // 密码加密
+        user.setPassword(SecureUtil.md5(user.getPassword()));
+
         // before process
-//        EntityTransaction transaction = entityManager.getTransaction();
-//        transaction.begin();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
 
         // 主调用
         entityManager.persist(user);
+        transaction.commit();
 
         // 调用其他方法方法
-        update(user); // 涉及事务
+//        update(user); // 涉及事务
         // register 方法和 update 方法存在于同一线程
         // register 方法属于 Outer 事务（逻辑）
         // update 方法属于 Inner 事务（逻辑）
@@ -54,7 +70,7 @@ public class UserServiceImpl implements UserService {
         // after process
         // transaction.commit();
 
-        return false;
+        return true;
     }
 
     @Override
@@ -76,6 +92,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User queryUserByNameAndPassword(String name, String password) {
         return null;
+    }
+
+    @Override
+    public Collection<User> getAll() {
+        Query nativeQuery = entityManager.createNativeQuery("SELECT id, name, password, email, phoneNumber FROM users", User.class);
+        return nativeQuery.getResultList();
     }
 
     @PreDestroy

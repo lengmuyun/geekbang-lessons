@@ -1,9 +1,9 @@
 package org.geektimes.projects.user.domain;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -20,21 +20,22 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = AUTO)
-    @NotNull
     private Long id;
 
     @Column
     private String name;
 
     @Column
-    @Max(32)
-    @Min(6)
+    @NotBlank
+    @Size(min = 6, max = 32)
     private String password;
 
     @Column
     private String email;
 
     @Column
+    @NotBlank
+    @Pattern(regexp = "^[1]([3-9])[0-9]{9}$")
     private String phoneNumber;
 
     public Long getId() {

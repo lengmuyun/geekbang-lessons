@@ -1,4 +1,4 @@
-package org.geektimes.projects.user.processor;
+package org.geektimes.web.mvc.processor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

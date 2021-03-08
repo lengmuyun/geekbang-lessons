@@ -1,7 +1,7 @@
 package org.geektimes.projects.user.web.listener;
 
-import org.geektimes.context.ComponentContext;
-import org.geektimes.projects.user.processor.DestroyAnnotationProcessor;
+import org.geektimes.web.mvc.context.ComponentContext;
+import org.geektimes.web.mvc.processor.DestroyAnnotationProcessor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

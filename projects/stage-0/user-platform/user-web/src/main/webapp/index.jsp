@@ -6,6 +6,7 @@
 <body>
 	<div class="container-lg">
 		<!-- Content here -->
-		Hello,World 2021
+		Hello,World 2021<br>
+		欢迎您, 新用户 <%=request.getAttribute("username")%>
 	</div>
 </body>

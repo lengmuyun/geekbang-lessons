@@ -3,6 +3,8 @@ package org.geektimes.projects.user.service;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.sql.LocalTransactional;
 
+import java.util.Collection;
+
 /**
  * 用户服务
  */
@@ -36,4 +38,7 @@ public interface UserService {
     User queryUserById(Long id);
 
     User queryUserByNameAndPassword(String name, String password);
+
+    Collection<User> getAll();
+
 }

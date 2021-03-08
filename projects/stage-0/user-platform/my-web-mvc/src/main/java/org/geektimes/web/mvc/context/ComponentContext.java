@@ -1,8 +1,8 @@
-package org.geektimes.context;
+package org.geektimes.web.mvc.context;
 
-import org.geektimes.function.ThrowableAction;
-import org.geektimes.function.ThrowableFunction;
-import org.geektimes.projects.user.processor.DestroyAnnotationProcessor;
+import org.geektimes.web.mvc.function.ThrowableAction;
+import org.geektimes.web.mvc.function.ThrowableFunction;
+import org.geektimes.web.mvc.processor.DestroyAnnotationProcessor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -58,6 +58,7 @@ public class ComponentContext {
     }
 
     public void init(ServletContext servletContext) throws RuntimeException {
+        logger.info("Context初始化");
         ComponentContext.servletContext = servletContext;
         servletContext.setAttribute(CONTEXT_NAME, this);
         // 获取当前 ServletContext（WebApp）ClassLoader
@@ -98,7 +99,7 @@ public class ComponentContext {
         });
     }
 
-    private void injectComponents(Object component, Class<?> componentClass) {
+    public void injectComponents(Object component, Class<?> componentClass) {
         Stream.of(componentClass.getDeclaredFields())
                 .filter(field -> {
                     int mods = field.getModifiers();

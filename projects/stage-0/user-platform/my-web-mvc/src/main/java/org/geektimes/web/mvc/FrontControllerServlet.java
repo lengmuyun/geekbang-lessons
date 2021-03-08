@@ -1,33 +1,32 @@
 package org.geektimes.web.mvc;
 
 import org.apache.commons.lang.StringUtils;
+import org.geektimes.web.mvc.context.ComponentContext;
 import org.geektimes.web.mvc.controller.Controller;
 import org.geektimes.web.mvc.controller.PageController;
 import org.geektimes.web.mvc.controller.RestController;
-import org.geektimes.web.mvc.header.CacheControlHeaderWriter;
-import org.geektimes.web.mvc.header.annotation.CacheControl;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
 public class FrontControllerServlet extends HttpServlet {
+
+    private Logger logger = Logger.getLogger(FrontControllerServlet.class.getName());
 
     /**
      * 请求路径和 Controller 的映射关系缓存
@@ -46,6 +45,7 @@ public class FrontControllerServlet extends HttpServlet {
      */
     public void init(ServletConfig servletConfig) {
         initHandleMethods();
+        injectComponents(controllersMapping.values());
     }
 
     /**
@@ -53,6 +53,7 @@ public class FrontControllerServlet extends HttpServlet {
      * 利用 ServiceLoader 技术（Java SPI）
      */
     private void initHandleMethods() {
+        logger.info("SPI加载Controller");
         for (Controller controller : ServiceLoader.load(Controller.class)) {
             Class<?> controllerClass = controller.getClass();
             Path pathFromClass = controllerClass.getAnnotation(Path.class);
@@ -69,6 +70,17 @@ public class FrontControllerServlet extends HttpServlet {
                         new HandlerMethodInfo(requestPath, method, supportedHttpMethods));
             }
             controllersMapping.put(requestPath, controller);
+        }
+    }
+
+    /**
+     * 注入Service层
+     * @param values
+     */
+    private void injectComponents(Collection<Controller> values) {
+        ComponentContext context = ComponentContext.getInstance();
+        for (Controller controller : values) {
+            context.injectComponents(controller, controller.getClass());
         }
     }
 
@@ -157,7 +169,7 @@ public class FrontControllerServlet extends HttpServlet {
                 if (throwable.getCause() instanceof IOException) {
                     throw (IOException) throwable.getCause();
                 } else {
-                    throw new ServletException(throwable.getCause());
+                    throw new ServletException(throwable);
                 }
             }
         }
