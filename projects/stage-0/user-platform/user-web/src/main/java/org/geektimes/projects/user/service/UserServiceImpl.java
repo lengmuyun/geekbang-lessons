@@ -4,6 +4,7 @@ import cn.hutool.crypto.SecureUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.sql.LocalTransactional;
+import org.geektimes.projects.user.web.holder.ThreadLocalHolder;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -14,8 +15,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.Collection;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserServiceImpl implements UserService {
+
+    private Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
 
     @Resource(name = "bean/EntityManager")
     private EntityManager entityManager;
@@ -29,19 +34,27 @@ public class UserServiceImpl implements UserService {
     public boolean register(User user) {
         Set<ConstraintViolation<User>> validateInfoSet = validator.validate(user);
         if (!CollectionUtils.isEmpty(validateInfoSet)) {
+            ThreadLocalHolder.set("数据校验失败: " + user.toString());
             return false;
         }
 
         // 密码加密
         user.setPassword(SecureUtil.md5(user.getPassword()));
 
-        // before process
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
+        try {
+            // before process
+            EntityTransaction transaction = entityManager.getTransaction();
+            transaction.begin();
 
-        // 主调用
-        entityManager.persist(user);
-        transaction.commit();
+            // 主调用
+            entityManager.persist(user);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            ThreadLocalHolder.set(e.getMessage());
+            return false;
+        }
 
         // 调用其他方法方法
 //        update(user); // 涉及事务
@@ -69,8 +82,6 @@ public class UserServiceImpl implements UserService {
 
         // after process
         // transaction.commit();
-
-        return true;
     }
 
     @Override
