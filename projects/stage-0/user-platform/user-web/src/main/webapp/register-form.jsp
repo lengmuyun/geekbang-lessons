@@ -2,36 +2,43 @@
 <jsp:directive.include file="/WEB-INF/jsp/prelude/include-head-meta.jspf" />
 	<title>Register Page</title>
     <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
     </style>
 </head>
 <body>
-	<div class="container">
-		<form class="form-signup" method="post" action="/register-action">
-			<h1 class="h3 mb-3 font-weight-normal">注册</h1>
-			<label for="inputUserName" class="sr-only">请输入用户名</label>
-			<input type="text" id="inputUserName" name="name" class="form-control" placeholder="请输入用户名" required autofocus>
-			<label for="inputPassword" class="sr-only">Password</label>
-			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="请输入密码" required>
-			<label for="inputEmail" class="sr-only">请输入电子邮件</label>
-			<input type="email" id="inputEmail" name="email" class="form-control" placeholder="请输入电子邮件" required autofocus>
-			<label for="inputPhoneNum" class="sr-only">请输入手机号</label>
-			<input type="text" id="inputPhoneNum" name="phoneNumber" class="form-control" placeholder="请输入手机号" required autofocus>
-			<button class="btn btn-lg btn-primary btn-block" id="btn_submit" type="submit">Sign up</button>
-			<p class="mt-5 mb-3 text-muted">&copy; 2017-2021</p>
-		</form>
+	<div class="container" style="margin-top: 30px">
+		<div class="panel-heading">
+			<h3 class="panel-title" align="center">注册页面</h3>
+		</div>
+		<div class="panel-body" style="margin-top: 30px">
+			<form method="post" action="/register-action">
+				<div class="form-group row">
+					<label for="inputUserName" class="col-sm-2 col-form-label">用户名</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="inputUserName" name="name">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="inputPassword" class="col-sm-2 col-form-label">密码</label>
+					<div class="col-sm-10">
+						<input type="password" class="form-control" id="inputPassword" name="password">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="inputEmail" class="col-sm-2 col-form-label">邮箱</label>
+					<div class="col-sm-10">
+						<input type="email" class="form-control" id="inputEmail" name="email">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="inputPhoneNumber" class="col-sm-2 col-form-label">手机号</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="inputPhoneNumber" name="phoneNumber">
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-lg btn-primary btn-block" type="submit">注册</button>
+				</div>
+			</form>
+		</div>
 	</div>
 </body>

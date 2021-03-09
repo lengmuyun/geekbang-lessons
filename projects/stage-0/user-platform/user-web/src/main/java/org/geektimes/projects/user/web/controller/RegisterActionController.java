@@ -41,7 +41,7 @@ public class RegisterActionController implements PageController {
 
         boolean result = userService.register(user);
         if (result) {
-            request.setAttribute("username", user.getName());
+            request.setAttribute("user", user);
             request.setAttribute("userList", userService.getAll());
             return "user-home.jsp";
         } else {
