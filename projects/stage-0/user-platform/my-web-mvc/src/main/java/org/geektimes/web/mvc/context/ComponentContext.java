@@ -2,7 +2,7 @@ package org.geektimes.web.mvc.context;
 
 import org.geektimes.web.mvc.function.ThrowableAction;
 import org.geektimes.web.mvc.function.ThrowableFunction;
-import org.geektimes.web.mvc.processor.DestroyAnnotationProcessor;
+import org.geektimes.web.mvc.annotation.DestroyAnnotationProcessor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

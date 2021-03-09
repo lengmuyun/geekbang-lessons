@@ -1,7 +1,7 @@
-package org.geektimes.projects.user.web.listener;
+package org.geektimes.web.mvc.listener;
 
+import org.geektimes.web.mvc.annotation.DestroyAnnotationProcessor;
 import org.geektimes.web.mvc.context.ComponentContext;
-import org.geektimes.web.mvc.processor.DestroyAnnotationProcessor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -28,7 +28,7 @@ public class ComponentContextInitializerListener implements ServletContextListen
 //        context.destroy();
 
         DestroyAnnotationProcessor destroyProcessor = ComponentContext.getInstance().getComponent("bean/DestroyAnnotationProcessor");
-        destroyProcessor.invokeDestory();
+        destroyProcessor.invokeDestroyMethods();
     }
 
 }

@@ -46,7 +46,7 @@
 			  factory="org.apache.naming.factory.BeanFactory" />
 
 	<Resource name="bean/DestroyAnnotationProcessor" auth="Container"
-			  type="org.geektimes.web.mvc.processor.DestroyAnnotationProcessor"
+			  type="org.geektimes.web.mvc.annotation.DestroyAnnotationProcessor"
 			  factory="org.apache.naming.factory.BeanFactory" />
 
 </Context>
