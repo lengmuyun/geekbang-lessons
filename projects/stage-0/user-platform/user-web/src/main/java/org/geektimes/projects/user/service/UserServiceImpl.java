@@ -12,8 +12,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
+import javax.validation.Path;
 import javax.validation.Validator;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,16 +36,18 @@ public class UserServiceImpl implements UserService {
     public boolean register(User user) {
         Set<ConstraintViolation<User>> validateInfoSet = validator.validate(user);
         if (!CollectionUtils.isEmpty(validateInfoSet)) {
-            ThreadLocalHolder.set("数据校验失败: " + user.toString());
+            String message = getValidateInfo(validateInfoSet);
+            ThreadLocalHolder.set("数据校验失败: " + message);
             return false;
         }
 
         // 密码加密
         user.setPassword(SecureUtil.md5(user.getPassword()));
 
+        EntityTransaction transaction = null;
         try {
             // before process
-            EntityTransaction transaction = entityManager.getTransaction();
+            transaction = entityManager.getTransaction();
             transaction.begin();
 
             // 主调用
@@ -53,6 +57,10 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
             ThreadLocalHolder.set(e.getMessage());
+
+            if (transaction != null) {
+                transaction.rollback();
+            }
             return false;
         }
 
@@ -82,6 +90,25 @@ public class UserServiceImpl implements UserService {
 
         // after process
         // transaction.commit();
+    }
+
+    private String getValidateInfo(Set<ConstraintViolation<User>> validateInfoSet) {
+        StringBuilder sb = new StringBuilder();
+        for (ConstraintViolation<User> violation : validateInfoSet) {
+            Path path = violation.getPropertyPath();
+            Iterator<Path.Node> iterator = path.iterator();
+            String propertyName = null;
+            if (iterator.hasNext()) {
+                Path.Node node = iterator.next();
+                propertyName = node.getName();
+            }
+
+            sb.append("Property Name: ").append(propertyName)
+                    .append(", Property Value: ").append(violation.getInvalidValue())
+                    .append(", Error Message: ").append(violation.getMessage())
+                    .append("<br/>");
+        }
+        return sb.toString();
     }
 
     @Override
